@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: tht
+  datasource:
+    url: jdbc:postgresql://localhost:5432/your_db_name
+    username: your_postgres_username
+    password: your_postgres_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
