@@ -52,7 +52,8 @@ src/main/java/com/robbyari/tht
     ```
 
 2.  **Configure Database**:
-    Update `src/main/resources/application.yaml` (or `application.properties`) with your PostgreSQL credentials:
+    Update `src/main/resources/application.yaml` (or `application.properties`) with your PostgreSQL credentials. 
+    It is recommended to use Environment Variables:
     ```yaml
     spring:
       datasource:
@@ -73,13 +74,10 @@ src/main/java/com/robbyari/tht
 
 ### 1. Customers
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/v1/customers` | Create a new customer |
-| `GET` | `/api/v1/customers/{customerId}/transactions` | Get transaction history for a customer |
-| `GET` | `/api/v1/customers/balances` | Get total balance for all customers |
+#### Create Customer
+**Endpoint**: `POST /api/v1/customers`
 
-**Example Request (Create Customer):**
+**Request Body**:
 ```json
 {
   "name": "John Doe",
@@ -89,34 +87,143 @@ src/main/java/com/robbyari/tht
 }
 ```
 
+**Response**:
+```json
+{
+  "status": 201,
+  "message": "Customer created successfully",
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phoneNumber": "081234567890",
+    "address": "Jakarta, Indonesia",
+    "createdAt": "2023-10-27T10:00:00",
+    "updatedAt": "2023-10-27T10:00:00"
+  }
+}
+```
+
+#### Get Customer Transactions
+**Endpoint**: `GET /api/v1/customers/{customerId}/transactions`
+
+**Response**:
+```json
+{
+  "status": 200,
+  "message": "Customer transactions retrieved successfully",
+  "data": [
+    {
+      "accountType": "SAVINGS",
+      "accountNumber": "1234567890",
+      "amount": 50000.00,
+      "transactionType": "DEPOSIT",
+      "transactionReference": "REF-12345",
+      "transactionDate": "2023-10-27T10:30:00",
+      "customerName": "John Doe",
+      "customerEmail": "john.doe@example.com",
+      "customerPhoneNumber": "081234567890",
+      "targetAccountNumber": null,
+      "targetCustomerName": null
+    }
+  ]
+}
+```
+
+#### Get All Customer Balances
+**Endpoint**: `GET /api/v1/customers/balances`
+
+**Response**:
+```json
+{
+  "status": 200,
+  "message": "Customer balances retrieved successfully",
+  "data": [
+    {
+      "customerId": 1,
+      "customerName": "John Doe",
+      "customerEmail": "john.doe@example.com",
+      "balance": 150000.00
+    }
+  ]
+}
+```
+
 ### 2. Accounts
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/v1/accounts` | Create a new account for a customer |
+#### Create Account
+**Endpoint**: `POST /api/v1/accounts`
 
-**Example Request (Create Account):**
+**Request Body**:
 ```json
 {
   "customerId": 1,
+  "initialBalance": 100000,
   "accountType": "SAVINGS"
+}
+```
+
+**Response**:
+```json
+{
+  "status": 201,
+  "message": "Account created successfully",
+  "data": {
+    "id": 1,
+    "accountNumber": "1234567890",
+    "balance": 100000,
+    "accountType": "SAVINGS",
+    "status": "ACTIVE",
+    "customerId": 1,
+    "customerName": "John Doe",
+    "createdAt": "2023-10-27T10:15:00"
+  }
 }
 ```
 
 ### 3. Transactions
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/v1/transactions` | Perform a transaction (DEPOSIT, WITHDRAWAL, TRANSFER) |
+#### Create Transaction
+**Endpoint**: `POST /api/v1/transactions`
 
-**Example Request (Transfer):**
+**Request Body (Deposit/Withdrawal)**:
+```json
+{
+  "accountId": 1,
+  "amount": 50000,
+  "transactionType": "DEPOSIT",
+  "description": "Initial Deposit"
+}
+```
+
+**Request Body (Transfer)**:
 ```json
 {
   "accountId": 1,
   "targetAccountId": 2,
-  "amount": 50000,
+  "amount": 25000,
   "transactionType": "TRANSFER",
-  "description": "Payment for services"
+  "description": "Payment for lunch"
+}
+```
+
+**Response**:
+```json
+{
+  "status": 201,
+  "message": "Transaction created successfully",
+  "data": {
+    "id": 1,
+    "transactionReference": "REF-12345",
+    "accountId": 1,
+    "accountNumber": "1234567890",
+    "targetAccountId": 2,
+    "targetAccountNumber": "0987654321",
+    "amount": 25000,
+    "transactionType": "TRANSFER",
+    "description": "Payment for lunch",
+    "transactionDate": "2023-10-27T12:00:00"
+  }
 }
 ```
 
